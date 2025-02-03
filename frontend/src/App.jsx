@@ -1,25 +1,13 @@
-import { Link, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import './App.css'
+import Navbar from './components/Navbar'
 
 function App() {
   
 
   return (
     <>
-      <div>
-        <Link to={"/"}>
-          HOME
-        </Link>
-        <Link to={"/doctors"}>
-          ALL DOCTORS
-        </Link>
-        <Link to={"/about"}>
-          ABOUT
-        </Link>
-        <Link to={"/contact"}>
-          CONTACT
-        </Link>
-      </div>
+      <Navbar/>
       <div>
         <Outlet/>
       </div>
