@@ -276,6 +276,7 @@ const getCurrentUser = async (req, res) => {
       success: true,
       userData: {
         username: user.username,
+        email: user.email,
         isAccountVerified: user.isAccountVerified,
       },
     });
