@@ -15,7 +15,8 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
 
   const loginByGoogle = async () => {
-    
+    axios.defaults.withCredentials = true;
+    window.open(backendUrl + "/api/auth/google", "_self");
   };
 
   const handleSubmit = async (e) => {
