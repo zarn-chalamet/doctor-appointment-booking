@@ -6,6 +6,9 @@ import Contact from "../pages/Contact"
 import Home from "../pages/Home"
 import LoginForm from "../pages/auth/Login";
 import SignUpForm from "../pages/auth/SignUp";
+import MyProfile from "../pages/MyProfile";
+import MyAppointment from "../pages/MyAppointment";
+import Doctor from "../pages/Doctor";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +38,18 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <SignUpForm/>
+      },
+      {
+        path: "/profile",
+        element: <MyProfile/>
+      },
+      {
+        path: "/my-appointments",
+        element: <MyAppointment/>
+      },
+      {
+        path: "/appointments/:id",
+        element: <Doctor/>
       }
     ]
   }, 
