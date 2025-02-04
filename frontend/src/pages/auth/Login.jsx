@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import PasswordInput from "../../components/PasswordInput";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../contextApi/AuthContext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const LoginForm = () => {
   const navigate = useNavigate();
+
+  const { backendUrl, setIsLoggedIn, getUserData } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,8 +18,26 @@ const LoginForm = () => {
     
   };
 
-  const handleSubmit = async () => {
-    
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+      axios.defaults.withCredentials = true;
+
+      const { data } = await axios.post(backendUrl + "/api/auth/login", {
+        email,
+        password,
+      });
+
+      if (data.success) {
+        setIsLoggedIn(true);
+        getUserData();
+        navigate("/");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (

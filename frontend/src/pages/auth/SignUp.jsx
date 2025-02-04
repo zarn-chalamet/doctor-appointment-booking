@@ -1,17 +1,36 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PasswordInput from "../../components/PasswordInput";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../contextApi/AuthContext";
 
 const SignUpForm = () => {
 
+  const { backendUrl, getUserData, setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
   
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const submitSignUp = async () => {
-    
+  const submitSignUp = async (e) => {
+    try {
+      e.preventDefault();
+
+      axios.defaults.withCredentials = true;
+      const {data} = await axios.post(backendUrl+'/api/auth/register',{username,email,password});
+      
+      if(data.success){
+        setIsLoggedIn(true);
+        getUserData();
+        navigate('/');
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
 

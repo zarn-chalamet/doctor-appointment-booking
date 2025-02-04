@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets_frontend/assets";
+import { AuthContext } from "../contextApi/AuthContext";
 
 export default function MyProfile() {
-  const [userData, setUserData] = useState({
+  const { userData, backendUrl, setUserData } = useContext(AuthContext);
+  const [originalData, setOriginalData] = useState({
     name: "Zarn Holland",
     image: assets.profile_pic,
     email: "zarnholland@gmail.com",
@@ -22,21 +24,21 @@ export default function MyProfile() {
       {/* Profile Header */}
       <div className="flex items-center gap-4 border-b pb-4">
         <img
-          src={userData.image}
+          src={originalData.image}
           alt="Profile"
           className="w-20 h-20 rounded-full border-2 border-gray-300"
         />
         {isEdit ? (
           <input
             type="text"
-            value={userData.name}
+            value={userData.username}
             onChange={(e) =>
-              setUserData((prev) => ({ ...prev, name: e.target.value }))
+              setUserData((prev) => ({ ...prev, username: e.target.value }))
             }
             className="border px-2 py-1 rounded"
           />
         ) : (
-          <h2 className="text-xl font-semibold">{userData.name}</h2>
+          <h2 className="text-xl font-semibold">{userData.username}</h2>
         )}
       </div>
 
@@ -54,14 +56,14 @@ export default function MyProfile() {
             {isEdit ? (
               <input
                 type="text"
-                value={userData.phone}
+                value={originalData.phone}
                 onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, phone: e.target.value }))
+                  setOriginalData((prev) => ({ ...prev, phone: e.target.value }))
                 }
                 className="border px-2 py-1 rounded"
               />
             ) : (
-              userData.phone
+              originalData.phone
             )}
           </p>
           <p>
@@ -71,7 +73,7 @@ export default function MyProfile() {
             <div className="space-y-1">
               <input
                 type="text"
-                value={userData.address.line1}
+                value={originalData.address.line1}
                 onChange={(e) =>
                   setUserData((prev) => ({
                     ...prev,
@@ -82,7 +84,7 @@ export default function MyProfile() {
               />
               <input
                 type="text"
-                value={userData.address.line2}
+                value={originalData.address.line2}
                 onChange={(e) =>
                   setUserData((prev) => ({
                     ...prev,
@@ -94,8 +96,8 @@ export default function MyProfile() {
             </div>
           ) : (
             <p>
-              {userData.address.line1}, <br />
-              {userData.address.line2}
+              {originalData.address.line1}, <br />
+              {originalData.address.line2}
             </p>
           )}
         </div>
@@ -111,9 +113,9 @@ export default function MyProfile() {
             <strong>Gender:</strong>{" "}
             {isEdit ? (
               <select
-                value={userData.gender}
+                value={originalData.gender}
                 onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, gender: e.target.value }))
+                  setOriginalData((prev) => ({ ...prev, gender: e.target.value }))
                 }
                 className="border px-2 py-1 rounded"
               >
@@ -121,7 +123,7 @@ export default function MyProfile() {
                 <option value="Female">Female</option>
               </select>
             ) : (
-              userData.gender
+              originalData.gender
             )}
           </p>
           <p>
@@ -129,14 +131,14 @@ export default function MyProfile() {
             {isEdit ? (
               <input
                 type="date"
-                value={userData.dob}
+                value={originalData.dob}
                 onChange={(e) =>
-                  setUserData((prev) => ({ ...prev, dob: e.target.value }))
+                  setOriginalData((prev) => ({ ...prev, dob: e.target.value }))
                 }
                 className="border px-2 py-1 rounded"
               />
             ) : (
-              userData.dob
+              originalData.dob
             )}
           </p>
         </div>
