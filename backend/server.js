@@ -7,11 +7,14 @@ const connectDb = require("./config/db");
 const passport = require("passport");
 require("./config/passport");
 const session = require("express-session");
-
+const connectCloudinary = require("./config/cloudinary");
 const app = express();
 
 //connect Database
 connectDb();
+
+//cloudinary
+connectCloudinary();
 
 const PORT = process.env.PORT || 5000;
 
@@ -36,6 +39,7 @@ app.use(passport.session());
 //api routes
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/auth", require("./routes/googleOAuth"));
+app.use("/api/admin", require("./routes/adminRoute"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

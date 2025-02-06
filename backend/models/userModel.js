@@ -34,6 +34,11 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 0,
   },
+  image: { type: String, default: "" },
+  address: { type: Object },
+  gender: { type: String, default: "Not Selected" },
+  dob: { type: String, default: "Not Selected" },
+  phone: { type: String, default: "00000000" },
 });
 
 module.exports = mongoose.model("User", userSchema);
