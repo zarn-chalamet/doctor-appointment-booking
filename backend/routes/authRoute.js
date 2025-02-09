@@ -9,8 +9,10 @@ const {
   isAuthenticated,
   sendResetOtp,
   resetPassword,
+  updateProfile,
 } = require("../controllers/authController");
 const userAuth = require("../middleware/userAuth");
+const upload = require("../middleware/multer");
 const router = express.Router();
 
 //register user [POST]
@@ -37,6 +39,8 @@ router.post("/reset-password", resetPassword);
 
 //get current user [GET]
 router.get("/user-data", userAuth, getCurrentUser);
+
+router.post("/update-profile", upload.single("image"), userAuth, updateProfile);
 
 //get user by user id [GET]
 // router.get("/:id", getUserById);

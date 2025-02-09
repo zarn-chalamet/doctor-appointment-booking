@@ -9,6 +9,7 @@ export const AuthContextProvider = ({children}) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const [isLoggedIn ,setIsLoggedIn] = useState(false);
     const [userData, setUserData] = useState(false);
+    const [doctors, setDoctors] = useState([]);
 
     const getAuthState = async () => {
         try {
@@ -33,15 +34,36 @@ export const AuthContextProvider = ({children}) => {
         }
     }
 
+    const getDoctorsData = async () => {
+        try {
+            const {data} = await axios.get(backendUrl + '/api/doctor/list');
+            console.log(data.doctors)
+            if(data.success){
+                setDoctors(data.doctors);
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const getSpecialityData = () => {
+        return doctors.map((doctor) => ({
+          speciality: doctor.speciality,
+        }));
+      };
+
     useEffect(()=>{
         getAuthState();
+        getDoctorsData();
     },[])
 
     const value = {
         backendUrl,
         isLoggedIn,setIsLoggedIn,
         userData,setUserData,
-        getUserData
+        getUserData,
+        doctors,
+        getSpecialityData
     }
 
     return (

@@ -1,20 +1,15 @@
-import React, { useState } from "react";
-import { doctors, specialityData } from "../assets/assets_frontend/assets"; // Replace with your doctors data
+import React, { useContext, useState } from "react";
+// import { specialityData } from "../assets/assets_frontend/assets"; // Replace with your doctors data
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../contextApi/AuthContext";
 
 export default function AllDoctors() {
+
+  const {doctors,getSpecialityData} = useContext(AuthContext);
   const [selectedSpeciality, setSelectedSpeciality] = useState("All");
 
   const navigate = useNavigate();
 
-  // const specialities = [
-  //   "General physician",
-  //   "Gynecologist",
-  //   "Dermatologist",
-  //   "Pediatrician",
-  //   "Neurologist",
-  //   "Gastroenterologist",
-  // ];
 
   const filteredDoctors =
     selectedSpeciality === "All"
@@ -40,7 +35,7 @@ export default function AllDoctors() {
               >
                 All Specialities
               </button>
-              {specialityData.map((speciality) => (
+              {getSpecialityData().map((speciality) => (
                 <button
                   key={speciality}
                   onClick={() => setSelectedSpeciality(speciality.speciality)}

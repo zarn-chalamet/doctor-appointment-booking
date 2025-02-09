@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { doctors } from "../assets/assets_frontend/assets";
+import { AuthContext } from "../contextApi/AuthContext";
 
 
 export default function TopDoctors() {
+    const {doctors} = useContext(AuthContext)
     const navigate = useNavigate();
   return (
     <div className="flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-16 px-10">

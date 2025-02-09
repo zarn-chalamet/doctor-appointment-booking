@@ -40,6 +40,7 @@ app.use(passport.session());
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/auth", require("./routes/googleOAuth"));
 app.use("/api/admin", require("./routes/adminRoute"));
+app.use("/api/doctor", require("./routes/doctorRoute"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);

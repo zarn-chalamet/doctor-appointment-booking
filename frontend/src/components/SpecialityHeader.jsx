@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import { Link } from "react-router-dom";
-import { specialityData } from "../assets/assets_frontend/assets";
+import Dermatologist from "../assets/assets_frontend/Dermatologist.svg"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import { AuthContext } from "../contextApi/AuthContext";
 
 export default function SpecialityHeader() {
+  const {getSpecialityData} = useContext(AuthContext)
   const [isOverflowing, setIsOverflowing] = useState(false);
   const scrollContainerRef = useRef(null);
 
@@ -66,14 +68,14 @@ export default function SpecialityHeader() {
             !isOverflowing ? "justify-center" : ""
           }`}
         >
-          {specialityData.map((item, index) => (
+          {getSpecialityData().map((item, index) => (
             <Link
               key={index}
               to={`/doctors/${item.speciality}`}
               className="flex-shrink-0 bg-white rounded-lg shadow-md hover:shadow-lg transition p-6 text-center w-48"
             >
               <img
-                src={item.image}
+                src={Dermatologist}
                 alt={item.speciality}
                 className="h-20 w-20 mx-auto mb-4 rounded-full object-cover"
               />

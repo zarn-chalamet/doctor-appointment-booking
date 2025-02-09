@@ -1,33 +1,94 @@
 import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets_frontend/assets";
 import { AuthContext } from "../contextApi/AuthContext";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 export default function MyProfile() {
-  const { userData, backendUrl, setUserData } = useContext(AuthContext);
-  const [originalData, setOriginalData] = useState({
-    name: "Zarn Holland",
-    image: assets.profile_pic,
-    email: "zarnholland@gmail.com",
-    phone: "+66 945458487",
-    address: {
-      line1: "57th Cross, Richmond",
-      line2: "Circle, Church Road, London",
-    },
-    gender: "Male",
-    dob: "2002-01-01",
-  });
-
+  const { userData, backendUrl, setUserData, getUserData } = useContext(AuthContext);
+  const [image, setImage] = useState(null); // Use null as the initial state for clarity
+  const [previewImage, setPreviewImage] = useState(userData.image); // To handle image preview
   const [isEdit, setIsEdit] = useState(false);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Optional: Validate file type and size
+      const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+      if (!validTypes.includes(file.type)) {
+        toast.error("Only JPEG and PNG images are allowed.");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size exceeds 5MB.");
+        return;
+      }
+
+      setImage(file);
+      setPreviewImage(URL.createObjectURL(file)); // Preview selected image
+    }
+  };
+
+  const updateUserProfileData = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("username", userData.username);
+      formData.append("phone", userData.phone);
+      formData.append("address", userData.address);
+      formData.append("gender", userData.gender);
+      formData.append("dob", userData.dob);
+
+      if (image) {
+        formData.append("image", image);
+      }
+
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post(`${backendUrl}/api/auth/update-profile`, formData);
+
+      if (data.success) {
+        toast.success(data.message);
+        getUserData();
+        setIsEdit(false);
+        setImage(null); // Reset image after successful upload
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(`An error occurred: ${error.message}`);
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       {/* Profile Header */}
       <div className="flex items-center gap-4 border-b pb-4">
-        <img
-          src={originalData.image}
-          alt="Profile"
-          className="w-20 h-20 rounded-full border-2 border-gray-300"
-        />
+        {isEdit ? (
+          <label htmlFor="image" className="cursor-pointer">
+            <div>
+              <img
+                className="w-20 h-20 rounded-full border-2 border-gray-300 object-cover"
+                src={previewImage || assets.contact_image}
+                alt="Profile"
+              />
+            </div>
+            <input
+              type="file"
+              id="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              hidden
+            />
+          </label>
+        ) : (
+          <div>
+            <img
+              className="w-20 h-20 rounded-full border-2 border-gray-300 object-cover"
+              src={userData.image || assets.contact_image}
+              alt="Profile"
+            />
+          </div>
+        )}
+
         {isEdit ? (
           <input
             type="text"
@@ -56,50 +117,31 @@ export default function MyProfile() {
             {isEdit ? (
               <input
                 type="text"
-                value={originalData.phone}
+                value={userData.phone}
                 onChange={(e) =>
-                  setOriginalData((prev) => ({ ...prev, phone: e.target.value }))
+                  setUserData((prev) => ({ ...prev, phone: e.target.value }))
                 }
                 className="border px-2 py-1 rounded"
               />
             ) : (
-              originalData.phone
+              userData.phone
             )}
           </p>
           <p>
-            <strong>Address:</strong>
+            <strong>Address:</strong>{" "}
+            {isEdit ? (
+              <input
+                type="text"
+                value={userData.address}
+                onChange={(e) =>
+                  setUserData((prev) => ({ ...prev, address: e.target.value }))
+                }
+                className="border px-2 py-1 rounded w-full"
+              />
+            ) : (
+              userData.address
+            )}
           </p>
-          {isEdit ? (
-            <div className="space-y-1">
-              <input
-                type="text"
-                value={originalData.address.line1}
-                onChange={(e) =>
-                  setUserData((prev) => ({
-                    ...prev,
-                    address: { ...prev.address, line1: e.target.value },
-                  }))
-                }
-                className="border px-2 py-1 rounded w-full"
-              />
-              <input
-                type="text"
-                value={originalData.address.line2}
-                onChange={(e) =>
-                  setUserData((prev) => ({
-                    ...prev,
-                    address: { ...prev.address, line2: e.target.value },
-                  }))
-                }
-                className="border px-2 py-1 rounded w-full"
-              />
-            </div>
-          ) : (
-            <p>
-              {originalData.address.line1}, <br />
-              {originalData.address.line2}
-            </p>
-          )}
         </div>
       </div>
 
@@ -113,17 +155,18 @@ export default function MyProfile() {
             <strong>Gender:</strong>{" "}
             {isEdit ? (
               <select
-                value={originalData.gender}
+                value={userData.gender}
                 onChange={(e) =>
-                  setOriginalData((prev) => ({ ...prev, gender: e.target.value }))
+                  setUserData((prev) => ({ ...prev, gender: e.target.value }))
                 }
                 className="border px-2 py-1 rounded"
               >
+                <option value="Prefer not to say">Prefer not to say</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
               </select>
             ) : (
-              originalData.gender
+              userData.gender
             )}
           </p>
           <p>
@@ -131,14 +174,14 @@ export default function MyProfile() {
             {isEdit ? (
               <input
                 type="date"
-                value={originalData.dob}
+                value={userData.dob}
                 onChange={(e) =>
-                  setOriginalData((prev) => ({ ...prev, dob: e.target.value }))
+                  setUserData((prev) => ({ ...prev, dob: e.target.value }))
                 }
                 className="border px-2 py-1 rounded"
               />
             ) : (
-              originalData.dob
+              userData.dob
             )}
           </p>
         </div>
@@ -148,7 +191,7 @@ export default function MyProfile() {
       <div className="mt-6 text-center">
         {isEdit ? (
           <button
-            onClick={() => setIsEdit(false)}
+            onClick={updateUserProfileData}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
           >
             Save Information

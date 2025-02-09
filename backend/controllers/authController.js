@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { transporter } = require("../middleware/nodemailer");
 const userModel = require("../models/userModel");
+const { v2: cloudinary } = require("cloudinary");
 //register user
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
@@ -277,9 +278,47 @@ const getCurrentUser = async (req, res) => {
       userData: {
         username: user.username,
         email: user.email,
+        phone: user.phone,
+        address: user.address,
+        gender: user.gender,
+        dob: user.dob,
+        image: user.image,
         isAccountVerified: user.isAccountVerified,
       },
     });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+const updateProfile = async (req, res) => {
+  try {
+    const { userId, username, address, gender, dob, phone } = req.body;
+    const imageFile = req.file;
+
+    console.log(userId);
+    if (!username || !address || !gender || !dob || !phone) {
+      return res.json({ success: false, message: "Missing Credetials" });
+    }
+
+    await userModel.findByIdAndUpdate(userId, {
+      username,
+      address,
+      gender,
+      dob,
+      phone,
+    });
+
+    if (imageFile) {
+      const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
+        resource_type: "image",
+      });
+      const imageUrl = imageUpload.secure_url;
+
+      await userModel.findByIdAndUpdate(userId, { image: imageUrl });
+    }
+
+    return res.json({ success: true, message: "Profile Updated" });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
@@ -295,4 +334,5 @@ module.exports = {
   isAuthenticated,
   sendResetOtp,
   resetPassword,
+  updateProfile,
 };
