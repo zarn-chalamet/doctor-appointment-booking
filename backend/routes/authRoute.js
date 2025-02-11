@@ -12,6 +12,7 @@ const {
   updateProfile,
   bookAppointment,
   getAppointmentsByUserId,
+  cancelAppointment,
 } = require("../controllers/authController");
 const userAuth = require("../middleware/userAuth");
 const upload = require("../middleware/multer");
@@ -47,6 +48,8 @@ router.post("/update-profile", upload.single("image"), userAuth, updateProfile);
 router.post("/book-appointment", userAuth, bookAppointment);
 
 router.get("/appointments", userAuth, getAppointmentsByUserId);
+
+router.post("/cancel-appointment", userAuth, cancelAppointment);
 
 //get user by user id [GET]
 // router.get("/:id", getUserById);

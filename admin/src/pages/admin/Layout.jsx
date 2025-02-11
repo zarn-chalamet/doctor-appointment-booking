@@ -11,7 +11,7 @@ export default function Layout() {
 
       {/* Sidebar and Main Content */}
       <div className="flex flex-1">
-        <div className="w-64">
+        <div className="">
           <Sidebar />
         </div>
         <div className="flex-1 p-6 bg-white shadow-inner overflow-y-auto">

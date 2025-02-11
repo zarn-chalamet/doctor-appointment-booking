@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const { v2: cloudinary } = require("cloudinary");
 const doctorModel = require("../models/doctorModel");
 const jwt = require("jsonwebtoken");
+const appointmentModel = require("../models/appointmentModel");
+const userModel = require("../models/userModel");
 
 const addDoctor = async (req, res) => {
   try {
@@ -109,4 +111,25 @@ const getAllDoctors = async (req, res) => {
   }
 };
 
-module.exports = { addDoctor, loginAdmin, getAllDoctors };
+//get all appointments as an admin
+const getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await appointmentModel.find();
+
+    // Fetch doctors related to appointments
+    const appointmentsToRetrun = await Promise.all(
+      appointments.map(async (appointment) => {
+        // Fetch doctor by docId
+        const doctor = await doctorModel.findById(appointment.docId);
+        //fetch user by userId
+        const user = await userModel.findById(appointment.userId);
+        return { ...appointment.toObject(), doctor, user }; // Convert to plain object
+      })
+    );
+    return res.json({ success: true, appointments: appointmentsToRetrun });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { addDoctor, loginAdmin, getAllDoctors, getAllAppointments };

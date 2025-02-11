@@ -96,6 +96,7 @@ export default function Doctor() {
       if(data.success){
         toast.success(data.message);
         getDoctorById(id);
+        navigate("/my-appointments")
       }else{
         toast.error(data.message)
       }

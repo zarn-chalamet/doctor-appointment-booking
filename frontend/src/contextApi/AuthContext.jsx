@@ -96,7 +96,8 @@ export const AuthContextProvider = ({children}) => {
         getSpecialityData,
         getDoctorById,
         doctor,
-        appointments
+        appointments,
+        getUserAppointments
     }
 
     return (

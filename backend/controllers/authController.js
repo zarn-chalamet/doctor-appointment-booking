@@ -382,18 +382,8 @@ const bookAppointment = async (req, res) => {
 const getAppointmentsByUserId = async (req, res) => {
   const { userId } = req.body;
   try {
-    // const appointments = await appointmentModel.find();
-    // const appointmentsByUserId = appointments.filter((appointment) => appointment.userId === userId);
-
     // Fetch appointments by userId directly in MongoDB
     const appointments = await appointmentModel.find({ userId });
-
-    console.log(appointments);
-
-    // const appointmentsToRespond =  () => appointmentsByUserId.map(appointment => {
-    //   const doctor = await doctorModel.findById(appointment.userId);
-    //   return {...appointment,doctor}
-    // })
 
     // Fetch doctors related to appointments
     const appointmentsWithDoctors = await Promise.all(
@@ -404,6 +394,41 @@ const getAppointmentsByUserId = async (req, res) => {
     );
 
     return res.json({ success: true, appointments: appointmentsWithDoctors });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+//API to cancel appointment
+const cancelAppointment = async (req, res) => {
+  try {
+    const { userId, appointmentId } = req.body;
+
+    const appointmentData = await appointmentModel.findById(appointmentId);
+
+    //verify appointment user
+    if (appointmentData.userId !== userId) {
+      return res.json({ success: false, message: "Unauthorized action" });
+    }
+
+    await appointmentModel.findByIdAndUpdate(appointmentId, {
+      cancelled: true,
+    });
+
+    //remove doctor slot
+    const { docId, slotDate, slotTime } = appointmentData;
+
+    const doctorData = await doctorModel.findById(docId);
+
+    let slots_booked = doctorData.slots_booked;
+
+    slots_booked[slotDate] = slots_booked[slotDate].filter(
+      (t) => t !== slotTime
+    );
+
+    await doctorModel.findByIdAndUpdate(docId, { slots_booked });
+
+    return res.json({ success: true, message: "Appointment Cancelled" });
   } catch (error) {
     return res.json({ success: false, message: error.message });
   }
@@ -422,4 +447,5 @@ module.exports = {
   updateProfile,
   bookAppointment,
   getAppointmentsByUserId,
+  cancelAppointment,
 };
