@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { doctors } from "../assets/assets_frontend/assets";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../contextApi/AuthContext"
 
 export default function RelatedDoctor({ docId, speciality }) {
+
+  const {doctors} = useContext(AuthContext)
   const navigate = useNavigate();
   const [relDocs, setRelDocs] = useState([]);
 

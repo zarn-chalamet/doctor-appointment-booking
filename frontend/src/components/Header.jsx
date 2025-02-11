@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets_frontend/assets";
 
 export default function Header() {
+  const navigate = useNavigate();
   return (
     <div className="bg-blue-500 text-white">
       {/* Container */}
@@ -14,14 +16,14 @@ export default function Header() {
             <img
               src={assets.group_profiles}
               alt="Group Profiles"
-              className="h-12 w-12 rounded-full border-2 border-white"
+              className="h-12  rounded-full border-2 border-none"
             />
             <p className="text-gray-100 text-lg">
               Simply browse through our extensive list of trusted doctors,
               schedule your appointment hassle-free.
             </p>
           </div>
-          <button className="bg-white text-blue-500 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition">
+          <button onClick={()=>navigate("/doctors")} className="bg-white text-blue-500 px-6 py-3 rounded-lg shadow-lg hover:bg-gray-100 transition">
             Book appointment →
           </button>
         </div>

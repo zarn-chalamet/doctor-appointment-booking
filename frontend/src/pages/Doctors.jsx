@@ -54,6 +54,7 @@ export default function AllDoctors() {
           {/* Doctors Grid */}
           <section className="col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDoctors.map((doctor,index) => (
+              doctor.available &&
               <div onClick={()=>{navigate(`/appointments/${doctor._id}`)}} key={index} className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:transition-all duration-500">
                     
                 <img className="bg-blue-50" src={doctor.image} alt="" />

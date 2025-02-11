@@ -16,8 +16,11 @@ export default function TopDoctors() {
         <div className="w-full grid grid-cols-auto gap-4 pt-5 gap-y-6 px-3 sm:px-0">
             
             {doctors.slice(0,12).map((doctor,index) => (
+                
+                doctor.available && 
+                
                 <div onClick={()=>{navigate(`/appointments/${doctor._id}`)}} key={index} className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:transition-all duration-500">
-                    
+                
                     <img className="bg-blue-50" src={doctor.image} alt="" />
                     <div className="p-4">
                         <div className="flex items-center gap-2 text-sm text-center text-green-500">
@@ -28,6 +31,7 @@ export default function TopDoctors() {
                         <p className="text-gray-600 text-sm">{doctor.speciality}</p>
                     </div>
                 </div>
+                
             ))}
         </div>
         <button onClick={()=> {navigate('/doctors');scrollTo(0,0)}} className="bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10">More</button>
