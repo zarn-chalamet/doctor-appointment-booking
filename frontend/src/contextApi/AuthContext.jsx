@@ -11,6 +11,7 @@ export const AuthContextProvider = ({children}) => {
     const [userData, setUserData] = useState(false);
     const [doctors, setDoctors] = useState([]);
     const [doctor,setDoctor] = useState(null);
+    const [appointments,setAppointments] = useState([]);
 
     const getAuthState = async () => {
         try {
@@ -66,9 +67,24 @@ export const AuthContextProvider = ({children}) => {
         }
     }
 
+    const getUserAppointments = async () => {
+        try {
+            const {data} = await axios.get(backendUrl+"/api/auth/appointments")
+
+            if(data.success){
+                setAppointments(data.appointments)
+            }else{
+                toast.error(data.message);
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     useEffect(()=>{
         getAuthState();
         getDoctorsData();
+        getUserAppointments();
     },[])
 
     const value = {
@@ -79,7 +95,8 @@ export const AuthContextProvider = ({children}) => {
         doctors,
         getSpecialityData,
         getDoctorById,
-        doctor
+        doctor,
+        appointments
     }
 
     return (

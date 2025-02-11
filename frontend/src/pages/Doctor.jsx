@@ -46,10 +46,11 @@ export default function Doctor() {
         let month = currentDate.getMonth()+1
         let year = currentDate.getFullYear()
 
+
         const slotDate = day + "_" + month + "_" + year
         const slotTime = formattedTime
 
-        const isSlotAvailable = currentDoctor.slots_booked !== null && currentDoctor.slots_booked[slotDate] && currentDoctor.slots_booked[slotDate].includes(slotTime) ? false : true;
+        const isSlotAvailable =currentDoctor.slots_booked &&  currentDoctor.slots_booked !== null && currentDoctor.slots_booked[slotDate] && currentDoctor.slots_booked[slotDate].includes(slotTime) ? false : true;
         
         if(isSlotAvailable){
           timeSlots.push({ datetime: new Date(currentDate), time: formattedTime });

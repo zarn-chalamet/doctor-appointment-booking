@@ -378,6 +378,37 @@ const bookAppointment = async (req, res) => {
   }
 };
 
+//get appointments by user id
+const getAppointmentsByUserId = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    // const appointments = await appointmentModel.find();
+    // const appointmentsByUserId = appointments.filter((appointment) => appointment.userId === userId);
+
+    // Fetch appointments by userId directly in MongoDB
+    const appointments = await appointmentModel.find({ userId });
+
+    console.log(appointments);
+
+    // const appointmentsToRespond =  () => appointmentsByUserId.map(appointment => {
+    //   const doctor = await doctorModel.findById(appointment.userId);
+    //   return {...appointment,doctor}
+    // })
+
+    // Fetch doctors related to appointments
+    const appointmentsWithDoctors = await Promise.all(
+      appointments.map(async (appointment) => {
+        const doctor = await doctorModel.findById(appointment.docId); // Fetch doctor by docId
+        return { ...appointment.toObject(), doctor }; // Convert to plain object
+      })
+    );
+
+    return res.json({ success: true, appointments: appointmentsWithDoctors });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -390,4 +421,5 @@ module.exports = {
   resetPassword,
   updateProfile,
   bookAppointment,
+  getAppointmentsByUserId,
 };
