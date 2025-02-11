@@ -9,8 +9,6 @@ import {ProfileInfo} from "../components/ProfileInfo"
 export default function Navbar() {
   const { isLoggedIn, backendUrl, setUserData, setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log("isLoggedIn")
-  console.log(isLoggedIn)
 
   const onLogout = async () => {
     try {

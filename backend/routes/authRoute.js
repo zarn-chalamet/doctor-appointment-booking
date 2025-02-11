@@ -10,6 +10,7 @@ const {
   sendResetOtp,
   resetPassword,
   updateProfile,
+  bookAppointment,
 } = require("../controllers/authController");
 const userAuth = require("../middleware/userAuth");
 const upload = require("../middleware/multer");
@@ -41,6 +42,8 @@ router.post("/reset-password", resetPassword);
 router.get("/user-data", userAuth, getCurrentUser);
 
 router.post("/update-profile", upload.single("image"), userAuth, updateProfile);
+
+router.post("/book-appointment", userAuth, bookAppointment);
 
 //get user by user id [GET]
 // router.get("/:id", getUserById);

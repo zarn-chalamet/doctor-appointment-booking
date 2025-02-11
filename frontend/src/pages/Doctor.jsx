@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { doctors } from "../assets/assets_frontend/assets";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {AuthContext} from "../contextApi/AuthContext"
 import RelatedDoctor from "../components/RelatedDoctor";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 export default function Doctor() {
+
+  const {doctor,backendUrl,isLoggedIn,getDoctorById} = useContext(AuthContext)
   const { id } = useParams();
   const [currentDoctor, setCurrentDoctor] = useState(null);
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
   const [docSlots, setDocSlots] = useState([]);
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState("");
+  const navigate = useNavigate();
 
   const getAvailableSlots = async () => {
     let today = new Date();
@@ -43,10 +48,17 @@ export default function Doctor() {
     setDocSlots(slotsArray);
   };
 
-  useEffect(() => {
-    const foundDoctor = doctors.find((doctor) => doctor._id === id);
-    setCurrentDoctor(foundDoctor);
-  }, [id]);
+  useEffect(()=>{
+    getDoctorById(id);
+    setCurrentDoctor(doctor);
+  },[id,doctor])
+
+  // useEffect(() => {
+  //   const foundDoctor = doctors.find((doctor) => doctor._id === id);
+  //   setCurrentDoctor(foundDoctor);
+  //   console.log(foundDoctor)
+  //   console.log("found doctor")
+  // }, [id]);
 
   useEffect(() => {
     getAvailableSlots();
@@ -54,6 +66,31 @@ export default function Doctor() {
 
   if (!currentDoctor) {
     return <p className="text-center text-gray-500">Loading doctor details...</p>;
+  }
+
+  const bookAppointment = async () => {
+    if(!isLoggedIn){
+      toast.warn('login to book appointment')
+      return navigate('/login');
+    }
+    try {
+      const date = docSlots[slotIndex][0].datetime
+      let day = date.getDate()
+      let month = date.getMonth()+1
+      let year = date.getFullYear()
+
+      const slotDate = day +"_"+month+"_"+year
+
+      const {data} = await axios.post(backendUrl+"/api/auth/book-appointment",{docId:currentDoctor._id,slotDate,slotTime})
+      if(data.success){
+        toast.success(data.message);
+        getDoctorById(id);
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   return (
@@ -123,7 +160,7 @@ export default function Doctor() {
 
         {/* Booking Button */}
         <div className="mt-6 flex justify-center">
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105 shadow-md">
+          <button onClick={bookAppointment} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-all transform hover:scale-105 shadow-md">
             Book Appointment
           </button>
         </div>

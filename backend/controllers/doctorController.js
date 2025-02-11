@@ -16,4 +16,26 @@ const changeAvailability = async (req, res) => {
   }
 };
 
-module.exports = { changeAvailability };
+//get doctor data
+const getDoctorById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.json({
+        success: false,
+        message: "Doctor id is needed to provide",
+      });
+    }
+
+    const doctor = await doctorModel.findById(id).select("-password");
+    if (!doctor) {
+      return res.json({ success: false, message: "No Doctor with this id" });
+    }
+
+    return res.json({ success: true, doctor });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+module.exports = { changeAvailability, getDoctorById };
