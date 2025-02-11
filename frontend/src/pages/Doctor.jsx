@@ -16,7 +16,7 @@ export default function Doctor() {
   const [slotTime, setSlotTime] = useState("");
   const navigate = useNavigate();
 
-  const getAvailableSlots = async () => {
+  const getAvailableSlots = () => {
     let today = new Date();
     let slotsArray = [];
 
@@ -40,7 +40,22 @@ export default function Doctor() {
           hour: "2-digit",
           minute: "2-digit",
         });
-        timeSlots.push({ datetime: new Date(currentDate), time: formattedTime });
+
+        //check slot is available or not
+        let day = currentDate.getDate()
+        let month = currentDate.getMonth()+1
+        let year = currentDate.getFullYear()
+
+        const slotDate = day + "_" + month + "_" + year
+        const slotTime = formattedTime
+
+        const isSlotAvailable = currentDoctor.slots_booked !== null && currentDoctor.slots_booked[slotDate] && currentDoctor.slots_booked[slotDate].includes(slotTime) ? false : true;
+        
+        if(isSlotAvailable){
+          timeSlots.push({ datetime: new Date(currentDate), time: formattedTime });
+        }
+
+        
         currentDate.setMinutes(currentDate.getMinutes() + 30);
       }
       slotsArray.push(timeSlots);
@@ -53,16 +68,11 @@ export default function Doctor() {
     setCurrentDoctor(doctor);
   },[id,doctor])
 
-  // useEffect(() => {
-  //   const foundDoctor = doctors.find((doctor) => doctor._id === id);
-  //   setCurrentDoctor(foundDoctor);
-  //   console.log(foundDoctor)
-  //   console.log("found doctor")
-  // }, [id]);
-
   useEffect(() => {
-    getAvailableSlots();
-  }, [id]);
+    if(currentDoctor){
+      getAvailableSlots();
+    }
+  }, [currentDoctor]);
 
   if (!currentDoctor) {
     return <p className="text-center text-gray-500">Loading doctor details...</p>;
@@ -112,7 +122,8 @@ export default function Doctor() {
             <p><strong>💼 Experience:</strong> {currentDoctor.experience} years</p>
             <p><strong>📝 About:</strong> {currentDoctor.about}</p>
             <p><strong>💰 Fees:</strong> ${currentDoctor.fees}</p>
-            <p><strong>📍 Address:</strong> {currentDoctor.address.line1}, {currentDoctor.address.line2}</p>
+            <p><strong>📍 Address:</strong> {currentDoctor.address}</p>
+            {/* <p>{currentDoctor.slots_booked.map((slot)=>slot.toString())}</p> */}
           </div>
         </div>
       </div>
