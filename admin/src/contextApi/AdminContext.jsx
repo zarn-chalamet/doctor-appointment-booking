@@ -12,6 +12,7 @@ const AdminContextProvider = ({children}) => {
 
     const [doctors,setDoctors] = useState([]);
     const [appointments,setAppointments] = useState([])
+    const [dashboardData,setDashboardData] = useState('');
     
     const getAllDoctors = async () => {
         try {
@@ -45,8 +46,6 @@ const AdminContextProvider = ({children}) => {
         try {
             const {data} = await axios.post(backendUrl+"/api/admin/appointments",{},{headers:{aToken}})
             console.log(aToken)
-            console.log("this is geAllAppointments functions")
-            console.log(data)
             if(data.success){
                 setAppointments(data.appointments);
             }else{
@@ -57,9 +56,28 @@ const AdminContextProvider = ({children}) => {
         }
     }
 
+    const getDashboardData = async () => {
+        try {
+            const {data} = await axios.post(backendUrl+"/api/admin/dashboard",{},{headers:{aToken}})
+            console.log("Dashboard data")
+            console.log(data)
+            if(data.success){
+                console.log("this ran")
+                console.log(data.dashboardData)
+                setDashboardData(data.dashboardData);
+            }else{
+                toast.error(data.message)
+            }
+            
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     useEffect(()=>{
         getAllDoctors();
         getAllAppointments();
+        getDashboardData();
     },[])
     
     const value = {
@@ -68,7 +86,8 @@ const AdminContextProvider = ({children}) => {
         doctors,
         getAllDoctors,
         changeAvailability,
-        appointments,getAllAppointments
+        appointments,getAllAppointments,
+        dashboardData,getDashboardData
     }
 
     return (

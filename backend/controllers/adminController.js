@@ -132,4 +132,41 @@ const getAllAppointments = async (req, res) => {
   }
 };
 
-module.exports = { addDoctor, loginAdmin, getAllDoctors, getAllAppointments };
+// data for admin dashboard
+const adminDashboard = async (req, res) => {
+  try {
+    const doctors = await doctorModel.find();
+    const users = await userModel.find();
+    const appointments = await appointmentModel.find();
+
+    // Fetch doctors related to appointments
+    const appointmentsToRetrun = await Promise.all(
+      appointments.map(async (appointment) => {
+        // Fetch doctor by docId
+        const doctor = await doctorModel.findById(appointment.docId);
+        //fetch user by userId
+        const user = await userModel.findById(appointment.userId);
+        return { ...appointment.toObject(), doctor, user }; // Convert to plain object
+      })
+    );
+
+    const dashboardData = {
+      doctors: doctors.length,
+      patients: users.length,
+      appointments: appointments.length,
+      latestAppointments: appointmentsToRetrun.reverse().slice(0, 5),
+    };
+
+    return res.json({ success: true, dashboardData });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  addDoctor,
+  loginAdmin,
+  getAllDoctors,
+  getAllAppointments,
+  adminDashboard,
+};

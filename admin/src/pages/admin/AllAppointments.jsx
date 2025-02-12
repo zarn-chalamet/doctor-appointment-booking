@@ -104,9 +104,10 @@ export default function AllAppointments() {
             </div>
 
             {/* Cancel Button */}
-            <button className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition mt-3 sm:mt-0">
-              Cancel
+            <button className="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600 transition">
+              <span className="text-center mb-1">x</span>
             </button>
+
           </div>
         ))}
       </div>

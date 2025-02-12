@@ -5,6 +5,7 @@ const {
   loginAdmin,
   getAllDoctors,
   getAllAppointments,
+  adminDashboard,
 } = require("../controllers/adminController");
 const adminAuth = require("../middleware/adminAuth");
 const { changeAvailability } = require("../controllers/doctorController");
@@ -16,5 +17,6 @@ router.post("/login", loginAdmin);
 router.post("/all-doctors", adminAuth, getAllDoctors);
 router.post("/change-availability", adminAuth, changeAvailability);
 router.post("/appointments", adminAuth, getAllAppointments);
+router.post("/dashboard", adminAuth, adminDashboard);
 
 module.exports = router;
