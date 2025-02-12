@@ -97,8 +97,7 @@ const appointmentsByDoctor = async (req, res) => {
 const getCurrentDoctor = async (req, res) => {
   try {
     const { docId } = req.body;
-    console.log("doctor id");
-    console.log(docId);
+
     const doctor = await doctorModel.findById(docId).select("-password");
     if (!doctor) {
       return res.json({ success: false, message: "No Doctor with this id" });
@@ -110,10 +109,99 @@ const getCurrentDoctor = async (req, res) => {
   }
 };
 
+//complete appointment
+const appointmentComplete = async (req, res) => {
+  try {
+    const { docId, appointmentId } = req.body;
+
+    const appointment = await appointmentModel.findById(appointmentId);
+
+    if (appointment && appointment.docId === docId) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, {
+        isCompleted: true,
+      });
+
+      return res.json({ success: true, message: "Appointment Completed" });
+    } else {
+      return res.json({ success: false, message: "Mark Failed" });
+    }
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+//cancel appointment
+const appointmentCancel = async (req, res) => {
+  try {
+    const { docId, appointmentId } = req.body;
+
+    const appointment = await appointmentModel.findById(appointmentId);
+
+    if (appointment && appointment.docId === docId) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, {
+        cancelled: true,
+      });
+
+      return res.json({ success: true, message: "Appointment Cancelled" });
+    } else {
+      return res.json({ success: false, message: "Mark Failed" });
+    }
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+//get doctor dashboard data
+const doctorDashboard = async (req, res) => {
+  try {
+    const { docId } = req.body;
+    const appointments = await appointmentModel.find({ docId });
+
+    let earnings = 0;
+    appointments.map((appointment) => {
+      if (appointment.isCompleted) {
+        earnings += appointment.amount;
+      }
+    });
+
+    console.log("earnings");
+    console.log(earnings);
+
+    let patients = [];
+    appointments.map((appointment) => {
+      if (!patients.includes(appointment.userId)) {
+        patients.push(appointment.userId);
+      }
+    });
+
+    // Fetch doctors related to appointments
+    const appointmentsWithPatients = await Promise.all(
+      appointments.map(async (appointment) => {
+        const user = await userModel.findById(appointment.userId); // Fetch doctor by docId
+        return { ...appointment.toObject(), user }; // Convert to plain object
+      })
+    );
+
+    const dashboardData = {
+      earnings,
+      appointments: appointments.length,
+      patients: patients.length,
+      latestAppointments: appointmentsWithPatients.reverse().slice(0, 10),
+    };
+
+    return res.json({ success: true, dashboardData });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   changeAvailability,
   getDoctorById,
   loginDoctor,
   appointmentsByDoctor,
   getCurrentDoctor,
+  appointmentComplete,
+  appointmentCancel,
+  doctorDashboard,
 };

@@ -11,12 +11,19 @@ export default function DSidebar() {
   return (
     <div className={`h-full ${collapsed ? 'w-20' : 'w-64'} bg-white shadow-lg px-4 py-6 border-r-2 transition-all duration-300`}>
       {/* Toggle Button */}
-      <button 
-        onClick={() => setCollapsed(!collapsed)} 
-        className="mb-4 p-2 rounded-lg hover:bg-gray-200 transition w-full flex justify-center"
-      >
-        <FiMenu className="text-gray-600 text-xl" />
-      </button>
+      <div className={`flex flex-row justify-end ${collapsed ? 'mr-1': ''}`}>
+        <div>
+
+        </div>
+        <div>
+          <button 
+          onClick={() => setCollapsed(!collapsed)} 
+          className="mb-4 p-2 rounded-lg hover:bg-gray-200 transition w-10 flex justify-center"
+        >
+          <FiMenu className="text-gray-600 text-xl" />
+        </button>
+        </div>
+      </div>
 
       {dToken && (
         <ul className="space-y-4">

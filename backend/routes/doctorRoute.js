@@ -4,6 +4,9 @@ const {
   loginDoctor,
   appointmentsByDoctor,
   getCurrentDoctor,
+  appointmentComplete,
+  appointmentCancel,
+  doctorDashboard,
 } = require("../controllers/doctorController");
 const { getAllDoctors } = require("../controllers/adminController");
 const doctorAuth = require("../middleware/doctorAuth");
@@ -19,6 +22,12 @@ router.post("/login", loginDoctor);
 router.post("/appointments", doctorAuth, appointmentsByDoctor);
 
 router.post("/current-doctor", doctorAuth, getCurrentDoctor);
+
+router.post("/complete-appointment", doctorAuth, appointmentComplete);
+
+router.post("/cancel-appointment", doctorAuth, appointmentCancel);
+
+router.post("/dashboard", doctorAuth, doctorDashboard);
 
 // router.post("/user", getCurrentUser);
 
