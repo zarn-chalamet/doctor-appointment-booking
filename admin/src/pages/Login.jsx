@@ -4,6 +4,7 @@ import { AdminContext } from '../contextApi/AdminContext';
 import axios from "axios"
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { DoctorContext } from '../contextApi/DoctorContext';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function Login() {
     const [loginState,setLoginState] = useState("Doctor");
 
     const {setAToken,backendUrl} = useContext(AdminContext);
+    const {setDToken} = useContext(DoctorContext)
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -29,6 +31,17 @@ export default function Login() {
           }
         }else{
           //doctor login
+          const {data} = await axios.post(backendUrl + "/api/doctor/login",{email,password})
+
+          if(data.success){
+            console.log("dToken")
+            console.log(data.token)
+            localStorage.setItem('dToken',data.token)
+            setDToken(data.token)
+            navigate("/doctor");
+          }else{
+            toast.error(data.message)
+          }
         }
       } catch (error) {
         toast.error(error.message)

@@ -7,7 +7,7 @@ const adminAuth = async (req, res, next) => {
     if (!atoken) {
       return res.json({
         success: false,
-        message: "Not Authorized Login Again",
+        message: "Not Authorized Login Again admin",
       });
     }
 

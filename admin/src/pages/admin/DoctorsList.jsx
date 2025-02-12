@@ -1,8 +1,14 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { AdminContext } from '../../contextApi/AdminContext'
 
 export default function DoctorsList() {
-  const {doctors,changeAvailability} = useContext(AdminContext);
+  const {aToken,doctors,changeAvailability,getAllDoctors} = useContext(AdminContext);
+
+  useEffect(() => {
+      if (aToken) {
+        getAllDoctors();
+      }
+    }, [aToken, getAllDoctors]);
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-6">All Doctors</h2>

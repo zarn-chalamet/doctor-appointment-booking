@@ -5,6 +5,10 @@ import Layout from "../pages/admin/Layout";
 import AllAppointments from "../pages/admin/AllAppointments"
 import AddDoctor from "../pages/admin/AddDoctor"
 import DoctorsList from "../pages/admin/DoctorsList"
+import Dlayout from "../pages/doctor/Dlayout";
+import DoctorDashboard from "../pages/doctor/DoctorDashboard"
+import DoctorAppointments from "../pages/doctor/DoctorAppointments"
+import DoctorProfile from "../pages/doctor/DoctorProfile"
 
 const router = createBrowserRouter([
   {
@@ -31,6 +35,24 @@ const router = createBrowserRouter([
         path: 'doctors-list',
         element: <DoctorsList/>
       }
+    ]
+  },
+  {
+    path: '/doctor/',
+    element: <Dlayout/>,
+    children: [
+      {
+        path: "",
+        element: <DoctorDashboard/>
+      },
+      {
+        path: 'appointments',
+        element: <DoctorAppointments/>
+      },
+      {
+        path: 'profile',
+        element: <DoctorProfile/>
+      },
     ]
   }
 ]);

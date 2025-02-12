@@ -6,7 +6,7 @@ export const AdminContext = createContext();
 
 const AdminContextProvider = ({children}) => {
 
-    const [aToken,setAToken] = useState(localStorage.getItem('aToken'));
+    const [aToken,setAToken] = useState(localStorage.getItem('aToken') ? localStorage.getItem('aToken') : '');
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL
 
@@ -60,7 +60,6 @@ const AdminContextProvider = ({children}) => {
         try {
             const {data} = await axios.post(backendUrl+"/api/admin/dashboard",{},{headers:{aToken}})
             console.log("Dashboard data")
-            console.log(data)
             if(data.success){
                 console.log("this ran")
                 console.log(data.dashboardData)
@@ -74,11 +73,9 @@ const AdminContextProvider = ({children}) => {
         }
     }
 
-    useEffect(()=>{
-        getAllDoctors();
-        getAllAppointments();
-        getDashboardData();
-    },[])
+    // useEffect(()=>{
+    //     getAllDoctors();
+    // },[aToken])
     
     const value = {
         aToken,setAToken,

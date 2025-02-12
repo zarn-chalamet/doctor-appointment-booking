@@ -1,4 +1,8 @@
 const doctorModel = require("../models/doctorModel");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const appointmentModel = require("../models/appointmentModel");
+const userModel = require("../models/userModel");
 
 const changeAvailability = async (req, res) => {
   try {
@@ -38,4 +42,78 @@ const getDoctorById = async (req, res) => {
   }
 };
 
-module.exports = { changeAvailability, getDoctorById };
+//doctor login
+const loginDoctor = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.json({ success: false, message: "Missing credentials" });
+  }
+
+  try {
+    const doctor = await doctorModel.findOne({ email });
+
+    if (!doctor) {
+      return res.json({ success: false, message: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, doctor.password);
+
+    if (isMatch) {
+      const token = jwt.sign(
+        { id: doctor._id },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+
+      return res.json({ success: true, token });
+    } else {
+      return res.json({ success: false, message: "Invalid credentials" });
+    }
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+//get appointments by doctorId
+const appointmentsByDoctor = async (req, res) => {
+  try {
+    const { docId } = req.body;
+    const appointments = await appointmentModel.find({ docId });
+
+    // Fetch doctors related to appointments
+    const appointmentsWithPatients = await Promise.all(
+      appointments.map(async (appointment) => {
+        const user = await userModel.findById(appointment.userId); // Fetch doctor by docId
+        return { ...appointment.toObject(), user }; // Convert to plain object
+      })
+    );
+
+    return res.json({ success: true, appointments: appointmentsWithPatients });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+const getCurrentDoctor = async (req, res) => {
+  try {
+    const { docId } = req.body;
+    console.log("doctor id");
+    console.log(docId);
+    const doctor = await doctorModel.findById(docId).select("-password");
+    if (!doctor) {
+      return res.json({ success: false, message: "No Doctor with this id" });
+    }
+
+    return res.json({ success: true, doctor });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
+module.exports = {
+  changeAvailability,
+  getDoctorById,
+  loginDoctor,
+  appointmentsByDoctor,
+  getCurrentDoctor,
+};
