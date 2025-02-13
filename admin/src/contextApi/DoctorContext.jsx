@@ -27,6 +27,21 @@ const DoctorContextProvider = ({children}) => {
         }
     }
 
+    const changeAvailability = async () => {
+        try {
+            const {data} = await axios.post(backendUrl+"/api/doctor/change-availability",{},{headers:{dToken}})
+
+            if(data.success){
+                toast.success(data.message)
+                getProfileData();
+            }else{
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
     const getProfileData = async () => {
         try {
             const {data} = await axios.post(backendUrl+'/api/doctor/current-doctor',{},{headers:{dtoken: dToken}})
@@ -58,7 +73,8 @@ const DoctorContextProvider = ({children}) => {
         backendUrl,
         appointments,getAppointments,
         currentDoctor,getProfileData,
-        dashboardData,getDashboardData
+        dashboardData,getDashboardData,
+        changeAvailability
     }
 
     return (

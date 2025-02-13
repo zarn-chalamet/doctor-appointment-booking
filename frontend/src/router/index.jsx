@@ -9,6 +9,8 @@ import SignUpForm from "../pages/auth/SignUp";
 import MyProfile from "../pages/MyProfile";
 import MyAppointment from "../pages/MyAppointment";
 import Doctor from "../pages/Doctor";
+import EmailVerify from "../pages/auth/EmailVerify"
+import ResetPassword from "../pages/auth/ResetPassword"
 
 const router = createBrowserRouter([
   {
@@ -50,7 +52,15 @@ const router = createBrowserRouter([
       {
         path: "/appointments/:id",
         element: <Doctor/>
-      }
+      },
+      {
+        path: "/email-verify",
+        element: <EmailVerify/>
+      },
+      {
+        path: "/reset-pass",
+        element: <ResetPassword/>
+      },
     ]
   }, 
 ]);

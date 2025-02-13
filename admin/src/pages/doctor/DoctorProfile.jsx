@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { DoctorContext } from "../../contextApi/DoctorContext";
 
 export default function DoctorProfile() {
-  const { dToken, currentDoctor, getProfileData } = useContext(DoctorContext);
+  const { dToken, currentDoctor, getProfileData, changeAvailability } = useContext(DoctorContext);
 
   useEffect(() => {
     getProfileData();
@@ -19,13 +19,16 @@ export default function DoctorProfile() {
           />
           <h2 className="text-2xl font-bold mt-4">{currentDoctor.name}</h2>
           <p className="text-gray-600">{currentDoctor.speciality}</p>
-          <p
-            className={`text-sm px-3 py-1 rounded-full mt-2 ${
-              currentDoctor.available ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
-            }`}
-          >
-            {currentDoctor.available ? "Available" : "Not Available"}
-          </p>
+          <div className="flex flex-row items-center gap-2">
+            <input className="mt-2" type="checkbox" onChange={()=>changeAvailability()} checked={currentDoctor.available}/>
+            <p
+              className={`text-sm px-3 py-1 rounded-full mt-2 ${
+                currentDoctor.available ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+              }`}
+            >
+              {currentDoctor.available ? "Available" : "Not Available"}
+            </p>
+          </div>
         </div>
 
         <div className="mt-6 space-y-3">

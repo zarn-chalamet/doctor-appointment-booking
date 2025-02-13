@@ -40,7 +40,7 @@ export default function DoctorDashboard() {
         <DashboardCard 
           icon={assets.earning_icon} 
           count={dashboardData?.earnings || 0} 
-          label="Doctors" 
+          label="Dollars" 
         />
 
         {/* Appointments count */}
